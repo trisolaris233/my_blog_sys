@@ -3,43 +3,62 @@
 
 import markdown
 import sys
-import json
+from jinja2 import Environment, PackageLoader, select_autoescape
+import os
+import filetype
 
 
-def read_config():
-    with open("config.json", "r", encoding="utf-8") as config_file:
-        config_content = config_file.read()
-    config = json.loads(config_content)
-    return config
 
-class Config:
-    def Config(self, dict_config):
-        self.dict = dict_config
-        self.page_directory = dict_config['page_directory']
-        self.render_directory = dict_config['render_directories']
-        self.use_template = dict_config['use_template']
+class Article:
+    def __init__(self, url, title, text):
+        self.url = url
+        self.title = title 
+        self.text = text
 
-class MarkdownText:
-    def MarkdownText(self, markdown_text):
-        self.text = markdown_text
-        self.title = ""
-        self.author = ""
-        self.date = None
-        self.last_update_date = None
-        self.tag = []
-        self.category = []
+def scan_archives(path):
+    res = []
 
-    def preprocess(self):
-        pass
+    for file in os.listdir(path):
+        print(file)
+        if os.path.isdir(file):
+            continue
+        basename = os.path.basename(file)
+        filename = os.path.splitext(basename)[0]
+        suffix = os.path.splitext(basename)[1]
 
-if __name__ == "__main__":
-    print(sys.argv)
+        if suffix == '.md':
+            url = "../output/" + filename + ".html"
+            title = filename
+            text = ''
+            
+            with open(os.path.join(path, file), 'r') as f:
+                text = f.read()
 
-    with open(sys.argv[1], "r", encoding="utf-8") as input_file:
-        t = input_file.read()
-    print(t)
-    html = markdown.markdown(t)
-    print(html)
-    with open(sys.argv[2], "w", encoding="utf-8") as output_file:
-        output_file.write(html)
+            res.append(Article(url, title, text))
+
+    return res
+
+
+
+if __name__ == '__main__':
+    env = Environment(
+        loader=PackageLoader('main', 'templates'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
+    template = env.get_template('index.html')
+    res = scan_archives("../archives")
+    for archive in res:
+        text = markdown.markdown(archive.text)
+        with open(archive.url, 'w+') as f:
+            f.write(text)
+
+
+    html = template.render(
+        picture_path='../test/sakura.png',
+        title="sunshine+ice's blog", 
+        articles=res
+    )
+
+    with open('index.html', 'w+') as f:
+        f.write(html)
 
