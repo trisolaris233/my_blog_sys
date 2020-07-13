@@ -39,9 +39,19 @@
 </style>
 <body>
     <article id="archive"> 
+        <h1 id="title"><a href="../index.html">{{ title }}</a></h1>
+        <time>
+            {% if date %}
+                {{ date }}
+            {% else %}
+                【日期丢失】
+            {% endif %}
+            
+        </time>
         {% autoescape false %}
         {{ body }}
         {% endautoescape %}
     </article>
+    <a href="#title">点我回到前面</a>
 </body>
 </html>

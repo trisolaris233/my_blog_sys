@@ -1,0 +1,7 @@
+{
+    "output_directory": "output",
+    "template_directory": "templates",
+    "archives_directory": "archives",
+    "css_directory": "templates/stylesheet",
+    "js_directory": "templates/javascript"
+}
