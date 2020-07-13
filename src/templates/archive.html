@@ -5,8 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
 </head>
+<style>
+    #archive {
+        max-width: 1000px;
+        
+    }
 
+    p img {
+        max-width: 1000px;
+    }
+    span.reverse-color {
+        background-color: black;
+        color: black;
+        transition:color 0.6s;
+        -moz-transition:color 0.6s; /* Firefox 4 */
+        -webkit-transition:color 0.6s; /* Safari and Chrome */
+        -o-transition:color 0.6s; /* Opera */
+    }
+    span.reverse-color:hover {
+        color: white;
+    }
+    blockquote{
+        margin-bottom: 2px;
+        margin-left: 1em;
+        padding-left: 3px;
+        border-left: 6px solid grey;
+        background-color: #f6f6f6;
+        color: #000;
+        font-weight: 300;
+        font-size: 1.25em;
+        line-height: 2.5em;
+    }
+</style>
 <body>
-    {{ body }}
+    <article id="archive"> 
+        {% autoescape false %}
+        {{ body }}
+        {% endautoescape %}
+    </article>
 </body>
 </html>
