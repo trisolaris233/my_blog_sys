@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sunshine&amp;Ice&#39;s Blog</title>
 </head>
 <style>
     #picture_div {
@@ -28,14 +28,17 @@
 </style>
 <body>
     <div id="picture_div">
-        <img src="{{ picture_path }}" alt="" id="side_picture">
+        <img src="../img/sakura.png" alt="" id="side_picture">
     </div>
-    <h1 id="title">{{ title }}/h1>
+    
+    <h1 id="title">
+        Sunshine&amp;Ice&#39;s Blog
+    </h1>
     <div id="archives">
         <ul id="archives_list">
-            {% for article in articles %}
-                <li><a href="{{ article.url }}">{{ article.title }}</a></li>
-            {% endfor %}
+            
+                <li><a href="../output/posts/trip_of_hang.html">【日常说】杭州行</a></li>
+            
         </ul>
     </div>
     

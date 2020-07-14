@@ -14,6 +14,10 @@ root_directory = os.path.split(
             os.path.realpath(sys.argv[0])
         )[0])[0]
 templates_list = []
+env = Environment(
+        loader=PackageLoader('main', 'templates'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
 
 class Config:
     def __init__(self, dict):
@@ -22,15 +26,20 @@ class Config:
         self.archives_directory = dict['archives_directory']
         self.css_directory = dict['css_directory']
         self.js_directory = dict['js_directory']
+        self.blog_title = dict['blog_title']
+        self.archive_output_directory = dict['archive_output_directory']
+        self.img_directory = dict['img_directory']
+        self.index_picture_light = dict['index_picture_light']
+        self.index_picture_dark = dict['index_picture_dark']
 
 # all the path is flitered by os.path.realpath(path, root_directory)
 class Archive:
     def __init__(self, dict):
-        self.href = getattr(dict, 'href', "")
-        self.meta = getattr(dict, 'meta', {})
-        self.text = getattr(dict, 'text', "")
-        self.filename = getattr(dict, 'filename')
-        self.html = getattr(dict, 'html', "")
+        self.href = dict['href']
+        self.meta = dict['meta']
+        self.text = dict['text']
+        self.filename = dict['filename']
+        self.html = dict['html']
 
 
 def read_config():
@@ -46,15 +55,17 @@ def read_config():
 def path_transform(path):
     return os.path.join(root_directory, path)
     
-def process_archives(archives_directory, output_directory):
+def process_archives(config):
     res = []
+    archives_directory = path_transform(config.archives_directory)
+    archive_output_directory = path_transform(config.archive_output_directory)
     for filename in os.listdir(archives_directory):
         filepath = os.path.join(archives_directory, filename)
         
         # if find directories
         # copy to output directory
         if os.path.isdir(filepath):
-            target_path = os.path.join(output_directory, filename)
+            target_path = os.path.join(archive_output_directory, filename)
             # if target directory does not exist
             # then create one
             if not os.path.exists(target_path):
@@ -74,7 +85,9 @@ def process_archives(archives_directory, output_directory):
             # markdown file
             if suffix == '.md':
                 res_dir = {}
-                res_dir['href'] = filepath
+                res_dir['href'] = os.path.relpath(
+                    os.path.join(archive_output_directory, prefix + ".html")
+                )
                 res_dir['filename'] = filename
                 with open(filepath, 'r', encoding='utf-8') as f:
                     res_dir['text'] = f.read()
@@ -108,13 +121,52 @@ def match_template(filename, template_directory):
     return os.path.join(template_directory, 'archive.html')
     
 
+def render_archives(archives, config):
+    template_directory = path_transform(config.template_directory)
+    archive_output_directory = path_transform(config.archive_output_directory)
+
+    for archive in archives:
+        template = env.get_template(
+            os.path.relpath(
+                match_template(archive.filename, template_directory),
+                template_directory 
+            )
+        )
+        html = template.render(archive=archive)
+        basename = os.path.splitext(archive.filename)[0]
+        target_filename = basename + ".html"
+
+        with open(os.path.join(archive_output_directory, target_filename), 'w+', encoding='utf-8') as f:
+            f.write(html)
+
+
+def render_index(archives, config):
+    blog_title = config.blog_title
+    output_directory = path_transform(config.output_directory)
+    img_directory = path_transform(config.img_directory)
+    index_picture_light = config.index_picture_light
+
+    template = env.get_template("index.html")
+    html = template.render(
+        title=blog_title, 
+        archives=archives, 
+        picture_path=os.path.relpath(
+            path_transform(os.path.join(img_directory, index_picture_light))
+        )
+    )
+
+    with open(os.path.join(output_directory, "index.html"), "w+", encoding='utf-8') as f:
+        f.write(html)
+    
+        
 
 if __name__ == '__main__':
     config = read_config()
     init_templates(path_transform(config.template_directory))
-    
-    archives = process_archives(
-        path_transform(config.archives_directory),
-        path_transform(config.output_directory)
-    )
+
+    archives = process_archives(config)
+
+    render_archives(archives, config)
+
+    render_index(archives, config)
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
+    <title>{{ archive.title }}</title>
 </head>
 <style>
     #archive {
@@ -39,17 +39,17 @@
 </style>
 <body>
     <article id="archive"> 
-        <h1 id="title"><a href="../index.html">{{ title }}</a></h1>
+        <h1 id="title"><a href="../index.html">{{ archive.meta.title[0] }}</a></h1>
         <time>
-            {% if date %}
-                {{ date }}
+            {% if archive.meta.date %}
+                {{ archive.meta.date[0] }}
             {% else %}
                 【日期丢失】
             {% endif %}
             
         </time>
         {% autoescape false %}
-        {{ body }}
+        {{ archive.html }}
         {% endautoescape %}
     </article>
     <a href="#title">点我回到前面</a>

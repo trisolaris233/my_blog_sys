@@ -1,7 +1,12 @@
 {
     "output_directory": "output",
-    "template_directory": "templates",
+    "archive_output_directory": "output/posts",
+    "template_directory": "src/templates",
     "archives_directory": "archives",
-    "css_directory": "templates/stylesheet",
-    "js_directory": "templates/javascript"
+    "css_directory": "src/templates/stylesheet",
+    "js_directory": "src/templates/javascript",
+    "blog_title": "Sunshine&Ice's Blog",
+    "img_directory": "img",
+    "index_picture_light": "sakura.png",
+    "index_picture_dark": ""
 }

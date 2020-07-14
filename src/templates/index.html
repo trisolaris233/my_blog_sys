@@ -36,8 +36,8 @@
     </h1>
     <div id="archives">
         <ul id="archives_list">
-            {% for article in articles %}
-                <li><a href="{{ article.relative_url }}">{{ article.title }}</a></li>
+            {% for archive in archives %}
+                <li><a href="{{ archive.href }}">{{ archive.meta.title[0] }}</a></li>
             {% endfor %}
         </ul>
     </div>
