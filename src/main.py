@@ -7,6 +7,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 import os
 import shutil
 import json
+import time
 
 config_directories = ['../config.json', 'config.json']
 root_directory = os.path.split(
@@ -31,6 +32,8 @@ class Config:
         self.img_directory = dict['img_directory']
         self.index_picture_light = dict['index_picture_light']
         self.index_picture_dark = dict['index_picture_dark']
+        self.archives_order_by = dict['archives_order_by']
+        self.date_format_string = dict['date_format_string']
 
 # all the path is flitered by os.path.realpath(path, root_directory)
 class Archive:
@@ -41,6 +44,10 @@ class Archive:
         self.filename = dict['filename']
         self.html = dict['html']
 
+class ArchivePair:
+    def __init__(self, archive, sec):
+        self.archive = archive
+        self.sec = sec
 
 def read_config():
     for config_path in config_directories:
@@ -146,15 +153,33 @@ def render_index(archives, config):
     img_directory = path_transform(config.img_directory)
     index_picture_light = config.index_picture_light
 
+    
+
+    archives_in_order = []
+    
+    for archive in archives:
+        if config.archives_order_by == 'date':
+            stime = time.strptime(archive.meta['date'][0], config.date_format_string)
+            sec = time.mktime(stime)
+            pair = ArchivePair(archive, sec)
+            archives_in_order.append(pair)
+    
+    archives_in_order.sort(key=(lambda elem : elem.sec), reverse=True)
+    archives_ = []
+
+    for archive in archives_in_order:
+        archives_.append(archive.archive)
+
     template = env.get_template("index.html")
     html = template.render(
         title=blog_title, 
-        archives=archives, 
+        archives=archives_, 
         picture_path=os.path.relpath(
             path_transform(os.path.join(img_directory, index_picture_light))
         )
     )
-
+    
+    
     with open(os.path.join(output_directory, "index.html"), "w+", encoding='utf-8') as f:
         f.write(html)
     

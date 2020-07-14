@@ -8,5 +8,7 @@
     "blog_title": "Sunshine&Ice's Blog",
     "img_directory": "img",
     "index_picture_light": "sakura.png",
-    "index_picture_dark": ""
+    "index_picture_dark": "",
+    "archives_order_by": "date",
+    "date_format_string": "%Y-%m-%d"
 }
