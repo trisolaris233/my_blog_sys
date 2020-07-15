@@ -8,6 +8,7 @@ import os
 import shutil
 import json
 import time
+from bs4 import BeautifulSoup
 
 config_directories = ['../config.json', 'config.json']
 root_directory = os.path.split(
@@ -127,6 +128,25 @@ def match_template(filename, template_directory):
             return template
     return os.path.join(template_directory, 'archive.html')
     
+def treat_html(html, archive, config):
+    soup = BeautifulSoup(html)
+    if soup.img is None:
+        print(archive.meta['title'][0]+" no img")
+    else:
+        s = soup.find_all('img')
+        for i in s:
+            i.wrap(soup.new_tag('div', id="img_box"))
+
+        for tag in soup.find_all('div', id="img_box"):
+            new_tag = soup.new_tag('p')
+            new_tag.append(tag.img['alt'])
+            tag.append(new_tag)
+                        
+        return str(soup)
+        
+    return html
+    
+
 
 def render_archives(archives, config):
     template_directory = path_transform(config.template_directory)
@@ -140,6 +160,7 @@ def render_archives(archives, config):
             )
         )
         html = template.render(archive=archive)
+        html = treat_html(html, archive, config)
         basename = os.path.splitext(archive.filename)[0]
         target_filename = basename + ".html"
 

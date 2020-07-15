@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ archive.title }}</title>
+    <title></title>
 </head>
 <style>
     #archive {
@@ -44,38 +44,29 @@
 </style>
 <body>
     <article id="archive"> 
-        <h1 id="title"><a href="../index.html">{{ archive.meta.title[0] }}</a></h1>
+        <h1 id="title"><a href="../index.html">【始知道】书摘</a></h1>
         <p>
             Last updated: 
             <time>
-                {% if archive.meta.modified %}
-                    {{ archive.meta.modified[0] }}
-                {% else %}
-                    {% if archive.meta.date %}
-                        {{ archive.meta.date[0] }}
-                    {% else %}
-                        【日期丢失】
-                    {% endif %}
-                {% endif %}
+                
+                    2020-7-15
+                
             </time>
         </p>
-
         <p>
             Created: 
             <time>
-                {% if archive.meta.date %}
-                    {{ archive.meta.date[0] }}
-                {% else %}
-                    【日期丢失】
-                {% endif %}
+                
+                    2018-01-01
+                
                 
             </time>
         </p>
         
         
-        {% autoescape false %}
-        {{ archive.html }}
-        {% endautoescape %}
+        
+        <p>test</p>
+        
     </article>
     <a href="#title">点我回到前面</a>
 </body>
